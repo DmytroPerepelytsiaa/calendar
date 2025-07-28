@@ -1,11 +1,12 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import FullCalendar from '@fullcalendar/vue3';
+import { CALENDAR_OPTIONS } from './constants';
+
+const calendarOptions = CALENDAR_OPTIONS;
+</script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <FullCalendar :options="calendarOptions"></FullCalendar>
 </template>
 
 <style scoped></style>
