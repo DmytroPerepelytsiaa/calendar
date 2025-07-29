@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import FullCalendar from '@fullcalendar/vue3';
-import type { CalendarApi, DateSelectArg, EventApi, EventClickArg, EventInput } from '@fullcalendar/core';
+import type { CalendarApi, CalendarOptions, DateSelectArg, EventApi, EventClickArg } from '@fullcalendar/core';
+import type { EventImpl } from '@fullcalendar/core/internal';
 import { VueFinalModal } from 'vue-final-modal';
 import { ref } from 'vue';
 import { onMounted } from 'vue';
@@ -16,7 +17,7 @@ let calendarApi: CalendarApi | null = null;
 const showModal = ref(false);
 const selectedDate = ref<DateSelectArg | EventApi | null>(null);
 const calendarRef = ref<typeof FullCalendar | null>(null);
-const { getEvents, addEvent, deleteEvent, updateEvent } = useCalendarEventStorage();
+const { getEvents, setEvents } = useCalendarEventStorage();
 
 const handleDateSelect = (selectInfo: DateSelectArg): void => {
   if (calendarApi) {
@@ -33,7 +34,6 @@ const handleEventSave = (event: CalendarEventSavePayload): void => {
     calendarApi.addEvent(event);
   }
 
-  addEvent(event);
   showModal.value = false;
   selectedDate.value = null;
 };
@@ -51,7 +51,6 @@ const handleEventEdit = (event: Partial<EventApi>): void => {
     eventInCalendar.setEnd(event.end);
   }
 
-  updateEvent(event as CalendarEventSavePayload);
   showModal.value = false;
   selectedDate.value = null;
 };
@@ -59,7 +58,6 @@ const handleEventEdit = (event: Partial<EventApi>): void => {
 const handleEventDelete = (): void => {
   const event = selectedDate.value as EventApi;
   event?.remove();
-  deleteEvent(event.id);
   selectedDate.value = null;
   showModal.value = false;
 };
@@ -70,7 +68,11 @@ const handleEventClick = (clickInfo: EventClickArg): void => {
   showModal.value = true;
 };
 
-const calendarOptions = { ...CALENDAR_OPTIONS, initialEvents: getEvents(), select: handleDateSelect, eventClick: handleEventClick };
+const handleEvents = (events: EventImpl[]) => {
+  setEvents(events);
+};
+
+const calendarOptions = { ...CALENDAR_OPTIONS, initialEvents: getEvents(), select: handleDateSelect, eventClick: handleEventClick, eventsSet: handleEvents } as unknown as CalendarOptions;
 
 onMounted(() => {
   if (calendarRef.value) {

@@ -4,7 +4,7 @@ import { timeRegex } from '../constants/regex.const';
 export const isValidDate = () =>
   yup.string().required().test(
     'is-valid-date',
-    `Invalid calendar date (YYYY-MM-DD)`,
+    'Invalid calendar date (YYYY-MM-DD)',
     function (value) {
       if (!value) return false;
 
