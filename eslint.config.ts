@@ -5,7 +5,7 @@ import pluginVue from 'eslint-plugin-vue';
 export default defineConfigWithVueTs(
   {
     name: 'app/files-to-lint',
-    files: ['**/*.{ts,mts,tsx,vue}'],
+    files: ['**/*.{ts,js,mts,tsx,vue}'],
     rules: {
       semi: ['error', 'always'],
       quotes: ['error', 'single'],
