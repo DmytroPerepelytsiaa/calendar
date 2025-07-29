@@ -118,7 +118,7 @@ onMounted(() => {
 
     <div class="flex justify-between items-center">
       <button class="border border-red-400 text-red-400 rounded-lg px-3 py-1.5 hover:bg-red-400 hover:text-white transition-colors" @click="eventId ? emit('delete') : emit('close')">{{ eventId ? 'Discard' : 'Cancel' }}</button>
-      <button :disabled="!meta.valid" class="border bg-blue-500 rounded-lg text-white px-3 py-1.5 disabled:bg-slate-700 disabled:hover:bg-slate-600 transition-colors" @click="onSubmit">{{ eventId ? 'Edit' : 'Save' }}</button>
+      <button :disabled="!meta.valid" class="border bg-blue-500 hover:bg-blue-600 rounded-lg text-white px-3 py-1.5 disabled:bg-slate-700 disabled:hover:bg-slate-600 transition-colors" @click="onSubmit">{{ eventId ? 'Edit' : 'Save' }}</button>
     </div>
   </form>
 </template>
