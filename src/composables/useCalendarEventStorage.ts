@@ -1,16 +1,26 @@
+import type { CalendarEventSavePayload } from '@/models';
+
 export function useCalendarEventStorage() {
-  const getEvents = () => {
-    return JSON.parse(localStorage.getItem('events')) ?? [];
+  const getEvents = (): CalendarEventSavePayload[] => {
+    const events = localStorage.getItem('events');
+    return events ? JSON.parse(events) : [];
   };
 
-  const addEvent = (event) => {
+  const addEvent = (event: CalendarEventSavePayload) => {
     const events = getEvents();
     events.push(event);
     localStorage.setItem('events', JSON.stringify(events));
   };
 
+  const deleteEvent = (eventId: string) => {
+    const events = getEvents();
+    const updatedEvents = events.filter(event => event.id !== eventId);
+    localStorage.setItem('events', JSON.stringify(updatedEvents));
+  }
+
   return {
     getEvents,
     addEvent,
+    deleteEvent,
   };
 };

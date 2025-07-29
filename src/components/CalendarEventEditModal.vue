@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { DateSelectArg } from '@fullcalendar/core';
+import type { DateSelectArg, EventApi } from '@fullcalendar/core';
 import { useForm, useField } from 'vee-validate';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
+import { v4 as uuidv4 } from 'uuid';
 import * as yup from 'yup';
 
-const props = defineProps<{ selectedDate: DateSelectArg }>();
-const emit = defineEmits(['close', 'save']);
+const props = defineProps<{ selectedDate: DateSelectArg | EventApi | null }>();
+const eventId = ref<string | null>(null);
+const emit = defineEmits(['close', 'save', 'edit', 'delete']);
 const timeRegex = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
 
 const { meta, setFieldValue, handleSubmit } = useForm({
@@ -71,22 +73,44 @@ const { value: endDay, errorMessage: endDayError } = useField('endDay');
 const { value: startTime, errorMessage: startTimeError } = useField('startTime');
 const { value: endTime, errorMessage: endTimeError } = useField('endTime');
 
+const onSubmit = handleSubmit((values) => {
+  const { title, startDay, startTime, endDay, endTime } = values;
+  const startDate = new Date(`${startDay}T${startTime}`);
+  const endDate = new Date(`${endDay}T${endTime}`);
+
+  const newEvent: Partial<EventApi> = {
+    id: eventId.value ?? uuidv4(),
+    title,
+    start: startDate,
+    end: endDate,
+  };
+  
+  emit(eventId.value ? 'edit' : 'save', newEvent);
+});
+
 onMounted(() => {
   if (props.selectedDate) {
-    const { start, startStr, end, endStr } = props.selectedDate;
+    const { start, startStr, end, endStr, title, id } = props.selectedDate as EventApi;
+    eventId.value = id ?? null;
 
     const toDateStr = (date: string) => date.split('T')[0];
     const toTimeStr = (date: Date) => date.toTimeString().slice(0, 5);
 
     setFieldValue('startDay', toDateStr(startStr));
     setFieldValue('endDay', toDateStr(endStr));
-    setFieldValue('startTime', toTimeStr(start));
-    setFieldValue('endTime', toTimeStr(end));
-  }
-});
 
-const onSubmit = handleSubmit((values) => {
-  emit('save', values);
+    if (start) {
+      setFieldValue('startTime', toTimeStr(start));
+    }
+
+    if (end) {
+      setFieldValue('endTime', toTimeStr(end));
+    }
+
+    if (title) {
+      setFieldValue('title', title);
+    }
+  }
 });
 </script>
 
@@ -128,8 +152,8 @@ const onSubmit = handleSubmit((values) => {
     </div>
 
     <div class="flex justify-between items-center">
-      <button class="border border-red-400 text-red-400 rounded-lg px-3 py-1.5 hover:bg-red-400 hover:text-white transition-colors" @click="emit('close')">Cancel</button>
-      <button :disabled="!meta.valid" class="border bg-blue-500 rounded-lg text-white px-3 py-1.5 disabled:bg-slate-700 disabled:hover:bg-slate-600 transition-colors" @click="onSubmit">Save</button>
+      <button class="border border-red-400 text-red-400 rounded-lg px-3 py-1.5 hover:bg-red-400 hover:text-white transition-colors" @click="eventId ? emit('delete') : emit('close')">{{ eventId ? 'Discard' : 'Cancel' }}</button>
+      <button :disabled="!meta.valid" class="border bg-blue-500 rounded-lg text-white px-3 py-1.5 disabled:bg-slate-700 disabled:hover:bg-slate-600 transition-colors" @click="onSubmit">{{ eventId ? 'Edit' : 'Save' }}</button>
     </div>
   </form>
 </template>
