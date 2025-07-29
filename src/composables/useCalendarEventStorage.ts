@@ -1,4 +1,4 @@
-import type { CalendarEventSavePayload } from '@/models';
+import type { CalendarEventSavePayload } from '@/types';
 
 export function useCalendarEventStorage() {
   const getEvents = (): CalendarEventSavePayload[] => {

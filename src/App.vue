@@ -8,7 +8,7 @@ import 'vue-final-modal/style.css';
 
 import { CALENDAR_OPTIONS } from './constants';
 import { useCalendarEventStorage } from './composables';
-import type { CalendarEventSavePayload } from './models';
+import type { CalendarEventSavePayload } from './types';
 import CalendarEventEditModal from './components/CalendarEventEditModal.vue';
 import './assets/main.scss';
 
