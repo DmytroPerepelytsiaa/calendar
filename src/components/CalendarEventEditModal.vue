@@ -3,6 +3,7 @@ import type { DateSelectArg, EventApi } from '@fullcalendar/core';
 import { useForm, useField } from 'vee-validate';
 import { onMounted, ref } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
+// @ts-ignore verte-vue3 doesn't have types
 import Verte from 'verte-vue3';
 import * as yup from 'yup';
 
