@@ -24,7 +24,7 @@ const calendarOptions = { ...CALENDAR_OPTIONS, select: handleDateSelect };
   <FullCalendar :options="calendarOptions"></FullCalendar>
 
   <VueFinalModal v-model="showModal" :esc-to-close="true" :click-to-close="true">
-    <EventEditModal :date="selectedDate" @close="showModal = false" />
+    <EventEditModal :selectedDate="selectedDate" @close="showModal = false" />
   </VueFinalModal>
 </template>
 

@@ -20,9 +20,11 @@
     "@fullcalendar/interaction": "^6.1.18",
     "@fullcalendar/timegrid": "^6.1.18",
     "@fullcalendar/vue3": "^6.1.18",
+    "vee-validate": "^4.15.1",
     "vue": "^3.5.18",
     "vue-final-modal": "^4.5.5",
-    "vue-router": "^4.5.1"
+    "vue-router": "^4.5.1",
+    "yup": "^1.6.1"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.2",
