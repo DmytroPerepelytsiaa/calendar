@@ -1,1 +1,1 @@
-export * from './calendar.const';
+export * from './calendar-options.const';

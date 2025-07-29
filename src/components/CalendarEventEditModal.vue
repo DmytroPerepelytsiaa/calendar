@@ -5,12 +5,12 @@ import { onMounted } from 'vue';
 import * as yup from 'yup';
 
 const props = defineProps<{ selectedDate: DateSelectArg }>();
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'save']);
 const timeRegex = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
 
-const { meta, setFieldValue } = useForm({
+const { meta, setFieldValue, handleSubmit } = useForm({
   validationSchema: yup.object({
-    name: yup.string().required().max(30),
+    title: yup.string().required().max(30),
     startDay: yup.string().required().test(
       'is-valid-date',
       'Invalid calendar date (YYYY-MM-DD)', 
@@ -65,7 +65,7 @@ const { meta, setFieldValue } = useForm({
   }),
 });
 
-const { value: name, errorMessage: nameError } = useField('name');
+const { value: title, errorMessage: titleError } = useField('title');
 const { value: startDay, errorMessage: startDayError } = useField('startDay');
 const { value: endDay, errorMessage: endDayError } = useField('endDay');
 const { value: startTime, errorMessage: startTimeError } = useField('startTime');
@@ -73,16 +73,20 @@ const { value: endTime, errorMessage: endTimeError } = useField('endTime');
 
 onMounted(() => {
   if (props.selectedDate) {
-    const { start, end } = props.selectedDate;
+    const { start, startStr, end, endStr } = props.selectedDate;
 
-    const toDateStr = (date: Date) => date.toISOString().split('T')[0];
+    const toDateStr = (date: string) => date.split('T')[0];
     const toTimeStr = (date: Date) => date.toTimeString().slice(0, 5);
 
-    setFieldValue('startDay', toDateStr(start));
-    setFieldValue('endDay', toDateStr(end));
+    setFieldValue('startDay', toDateStr(startStr));
+    setFieldValue('endDay', toDateStr(endStr));
     setFieldValue('startTime', toTimeStr(start));
     setFieldValue('endTime', toTimeStr(end));
   }
+});
+
+const onSubmit = handleSubmit((values) => {
+  emit('save', values);
 });
 </script>
 
@@ -91,8 +95,8 @@ onMounted(() => {
     <button class="border border-slate-300 flex items-center justify-center text-xs h-5 w-5 rounded-full absolute top-2 right-2" @click="emit('close')">X</button>
 
     <label class="mt-4 mb-4 block">
-      <input class="form-input" placeholder="Event name" v-model="name" />
-      <span class="text-red-500 text-sm">{{ nameError }}</span>
+      <input class="form-input" placeholder="Event title" v-model="title" />
+      <span class="text-red-500 text-sm">{{ titleError }}</span>
     </label>
     
     <div class="mb-4">
@@ -125,7 +129,7 @@ onMounted(() => {
 
     <div class="flex justify-between items-center">
       <button class="border border-red-400 text-red-400 rounded-lg px-3 py-1.5 hover:bg-red-400 hover:text-white transition-colors" @click="emit('close')">Cancel</button>
-      <button :disabled="!meta.valid" class="border bg-blue-500 rounded-lg text-white px-3 py-1.5 disabled:bg-slate-700 disabled:hover:bg-slate-600 transition-colors">Save</button>
+      <button :disabled="!meta.valid" class="border bg-blue-500 rounded-lg text-white px-3 py-1.5 disabled:bg-slate-700 disabled:hover:bg-slate-600 transition-colors" @click="onSubmit">Save</button>
     </div>
   </form>
 </template>
