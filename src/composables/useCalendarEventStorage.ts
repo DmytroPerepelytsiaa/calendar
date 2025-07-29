@@ -12,6 +12,13 @@ export function useCalendarEventStorage() {
     localStorage.setItem('events', JSON.stringify(events));
   };
 
+  const updateEvent = (updatedEvent: CalendarEventSavePayload) => {
+    const events = getEvents();
+    const eventIndex = events.findIndex(event => event.id === updatedEvent.id);
+    events[eventIndex] = updatedEvent;
+    localStorage.setItem('events', JSON.stringify(events));
+  }
+
   const deleteEvent = (eventId: string) => {
     const events = getEvents();
     const updatedEvents = events.filter(event => event.id !== eventId);
@@ -21,6 +28,7 @@ export function useCalendarEventStorage() {
   return {
     getEvents,
     addEvent,
+    updateEvent,
     deleteEvent,
   };
 };

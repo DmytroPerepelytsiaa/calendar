@@ -16,7 +16,7 @@ let calendarApi: CalendarApi | null = null;
 const showModal = ref(false);
 const selectedDate = ref<DateSelectArg | EventApi | null>(null);
 const calendarRef = ref<typeof FullCalendar | null>(null);
-const { getEvents, addEvent, deleteEvent } = useCalendarEventStorage();
+const { getEvents, addEvent, deleteEvent, updateEvent } = useCalendarEventStorage();
 
 const handleDateSelect = (selectInfo: DateSelectArg): void => {
   if (calendarApi) {
@@ -38,7 +38,20 @@ const handleEventSave = (event: CalendarEventSavePayload): void => {
   selectedDate.value = null;
 };
 
-const handleEventEdit = (event: EventInput): void => {
+const handleEventEdit = (event: Partial<EventApi>): void => {
+  let eventInCalendar: EventApi | null = null;
+
+  if (calendarApi && event.id) {
+    eventInCalendar = calendarApi.getEventById(event.id);
+  }
+
+  if (eventInCalendar && event.start && event.end) {
+    eventInCalendar.setProp('title', event.title);
+    eventInCalendar.setStart(event.start);
+    eventInCalendar.setEnd(event.end);
+  }
+
+  updateEvent(event as CalendarEventSavePayload);
   showModal.value = false;
   selectedDate.value = null;
 };
