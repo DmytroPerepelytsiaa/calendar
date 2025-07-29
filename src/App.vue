@@ -5,13 +5,11 @@ import type { EventImpl } from '@fullcalendar/core/internal';
 import { VueFinalModal } from 'vue-final-modal';
 import { ref } from 'vue';
 import { onMounted } from 'vue';
-import 'vue-final-modal/style.css';
 
 import { CALENDAR_OPTIONS } from './constants';
 import { useCalendarEventStorage } from './composables';
 import type { CalendarEventSavePayload } from './types';
 import CalendarEventEditModal from './components/CalendarEventEditModal.vue';
-import './assets/main.scss';
 
 let calendarApi: CalendarApi | null = null;
 const showModal = ref(false);

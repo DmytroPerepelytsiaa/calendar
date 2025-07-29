@@ -3,6 +3,7 @@ import type { DateSelectArg, EventApi } from '@fullcalendar/core';
 import { useForm, useField } from 'vee-validate';
 import { onMounted, ref } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
+import Verte from 'verte-vue3';
 import * as yup from 'yup';
 
 import { isEndAfterStartDate, isEndTimeAfterStartTime, isValidDate, timeFormat } from '@/validators';
@@ -18,6 +19,7 @@ const { meta, setFieldValue, handleSubmit } = useForm({
     endDay: isEndAfterStartDate().concat(isValidDate()),
     startTime: timeFormat(),
     endTime: isEndTimeAfterStartTime(),
+    backgroundColor: yup.string().default('#3b82f6'),
   }),
 });
 
@@ -26,9 +28,10 @@ const { value: startDay, errorMessage: startDayError } = useField('startDay');
 const { value: endDay, errorMessage: endDayError } = useField('endDay');
 const { value: startTime, errorMessage: startTimeError } = useField('startTime');
 const { value: endTime, errorMessage: endTimeError } = useField('endTime');
+const { value: backgroundColor } = useField('backgroundColor');
 
 const onSubmit = handleSubmit((values) => {
-  const { title, startDay, startTime, endDay, endTime } = values;
+  const { title, startDay, startTime, endDay, endTime, backgroundColor } = values;
   const startDate = new Date(`${startDay}T${startTime}`);
   const endDate = new Date(`${endDay}T${endTime}`);
 
@@ -37,6 +40,7 @@ const onSubmit = handleSubmit((values) => {
     title,
     start: startDate,
     end: endDate,
+    backgroundColor,
   };
   
   emit(eventId.value ? 'edit' : 'save', newEvent);
@@ -44,7 +48,7 @@ const onSubmit = handleSubmit((values) => {
 
 onMounted(() => {
   if (props.selectedDate) {
-    const { start, startStr, end, endStr, title, id } = props.selectedDate as EventApi;
+    const { start, startStr, end, endStr, title, id, backgroundColor } = props.selectedDate as EventApi;
     eventId.value = id ?? null;
 
     const toDateStr = (date: string) => date.split('T')[0];
@@ -52,6 +56,7 @@ onMounted(() => {
 
     setFieldValue('startDay', toDateStr(startStr));
     setFieldValue('endDay', toDateStr(endStr));
+    setFieldValue('backgroundColor', backgroundColor);
 
     if (start) {
       setFieldValue('startTime', toTimeStr(start));
@@ -103,6 +108,11 @@ onMounted(() => {
       </div>
 
       <span class="text-red-500 text-sm">{{ startTimeError ?? endTimeError }}</span>
+    </div>
+
+    <div class="flex justify-between mb-4">
+      <span>Background color:</span>
+      <Verte picker="square" model="hex" v-model="backgroundColor"></Verte>
     </div>
 
     <div class="flex justify-between items-center">
